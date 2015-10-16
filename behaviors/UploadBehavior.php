@@ -150,10 +150,6 @@ class UploadBehavior extends Behavior
                 } else {
                     unset($this->owner->$attribute);
                 }
-            } elseif ($insert === true) {
-                unset($this->owner->$attribute);
-            } else {
-                $this->owner->setAttribute($attribute, $this->owner->getOldAttribute($attribute));
             }
         }
     }
