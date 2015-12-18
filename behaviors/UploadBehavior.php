@@ -2,12 +2,12 @@
 
 namespace vova07\fileapi\behaviors;
 
+use Yii;
 use yii\base\Behavior;
 use yii\base\InvalidParamException;
 use yii\db\ActiveRecord;
 use yii\helpers\FileHelper;
 use yii\validators\Validator;
-use Yii;
 
 /**
  * Class UploadBehavior
@@ -34,6 +34,8 @@ use Yii;
  * ]
  * ...
  * ```
+ *
+ * @property ActiveRecord $owner
  */
 class UploadBehavior extends Behavior
 {
@@ -78,22 +80,18 @@ class UploadBehavior extends Behavior
             throw new InvalidParamException('Invalid or empty attributes array.');
         } else {
             foreach ($this->attributes as $attribute => $config) {
-                if (!isset($config['path']) || empty($config['path'])) {
+                if (empty($config['path'])) {
                     throw new InvalidParamException('Path must be set for all attributes.');
                 }
-                if (!isset($config['tempPath']) || empty($config['tempPath'])) {
-                    throw new InvalidParamException('Temporary path must be set for all attributes.');
+                if (empty($config['tempPath'])) {
+                    $config['tempPath'] = '@runtime/upload';
                 }
-                if (!isset($config['url']) || empty($config['url'])) {
+                if (empty($config['url'])) {
                     $config['url'] = $this->publish($config['path']);
                 }
                 $this->attributes[$attribute]['path'] = FileHelper::normalizePath(Yii::getAlias($config['path'])) . DIRECTORY_SEPARATOR;
                 $this->attributes[$attribute]['tempPath'] = FileHelper::normalizePath(Yii::getAlias($config['tempPath'])) . DIRECTORY_SEPARATOR;
                 $this->attributes[$attribute]['url'] = rtrim($config['url'], '/') . '/';
-
-                $validator = Validator::createValidator('string', $this->owner, $attribute);
-                $this->owner->validators[] = $validator;
-                unset($validator);
             }
         }
     }
@@ -140,10 +138,7 @@ class UploadBehavior extends Behavior
 
             if (is_file($tempFile) && FileHelper::createDirectory($this->path($attribute))) {
                 if (rename($tempFile, $file)) {
-                    if ($insert === false && $this->unlinkOnSave === true && $this->owner->getOldAttribute(
-                            $attribute
-                        )
-                    ) {
+                    if ($insert === false && $this->unlinkOnSave === true && $this->owner->getOldAttribute($attribute)) {
                         $this->deleteFile($this->oldFile($attribute));
                     }
                     $this->triggerEventAfterUpload();
@@ -249,9 +244,7 @@ class UploadBehavior extends Behavior
     public function beforeUpdate()
     {
         foreach ($this->attributes as $attribute => $config) {
-            if ($this->owner->isAttributeChanged($attribute)) {
-                $this->saveFile($attribute, false);
-            }
+            $this->saveFile($attribute, false);
         }
     }
 
