@@ -22,5 +22,10 @@
         "psr-4": {
             "vova07\\fileapi\\": ""
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
     }
 }
