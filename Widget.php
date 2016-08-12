@@ -241,12 +241,12 @@ class Widget extends InputWidget
         if (!isset(Yii::$app->i18n->translations['vova07/fileapi']) && !isset(Yii::$app->i18n->translations['vova07/*'])) {
             Yii::$app->i18n->translations['vova07/fileapi'] = [
                 'class' => 'yii\i18n\PhpMessageSource',
-                'basePath' => '@vova07/fileapi/messages',
+                'basePath' => '@vendor/vova07/yii2-fileapi-widget/messages',
                 'fileMap' => [
                     'vova07/fileapi' => 'fileapi.php'
                 ],
                 'forceTranslation' => true
-        ];
+            ];
         }
     }
 

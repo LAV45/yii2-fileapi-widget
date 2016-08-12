@@ -12,7 +12,7 @@ class MultipleAsset extends AssetBundle
     /**
      * @inheritdoc
      */
-	public $sourcePath = '@vova07/fileapi/assets';
+	public $sourcePath = '@vendor/vova07/yii2-fileapi-widget/assets';
 
     /**
      * @inheritdoc
